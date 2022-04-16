@@ -1,0 +1,25 @@
+{
+  "name": "nodecrawler",
+  "version": "1.0.0",
+  "description": "API suit to get Reviews Crawled out of URL using Node/Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Node",
+    "Express",
+    "WebCrawl",
+    "reviewCrawler"
+  ],
+  "author": "Naman Thacker",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "helmet": "^5.0.2",
+    "morgan": "^1.10.0",
+    "puppeteer": "^13.5.2"
+  }
+}
