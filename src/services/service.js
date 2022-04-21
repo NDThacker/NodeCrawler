@@ -5,9 +5,9 @@ const cheerioMain = require('cheerio');
 const service = {}
 
 
-service.getListofReviews = (url) => {
+
+service.getAllReviews = async(url) => {
 	
-	// console.debug(url)
 	if(!url)
 	{
 		let err = new Error('No url provided');
@@ -15,23 +15,20 @@ service.getListofReviews = (url) => {
 		throw err;
 	}
 	let revNodes = [];
-	let revObjs = []
-	return pupp.launch().then(browser => {
-		return browser.newPage();
-	})
-	.then(page => {
-		return page.goto(url).then(() => {
-			return page.content();
-		})
-	})
-	.then(html => {
-		let cheerio = cheerioMain.load(html);
+	let revObjs = [];
+
+	let browser = await pupp.launch();
+	let page = await browser.newPage();
+
+	for(; url;) {
+		await page.goto(url);
+		let htmlC = await page.content();
+		let cheerio = cheerioMain.load(htmlC);
 		revNodes = cheerio('#customerReviews');
-		// console.debug(revNodes);
 		
 		if(revNodes.length == 0)
 		{
-			let err = new Error('Either No reviews yet for the product OR Invalid Review Page');
+			let err = new Error('Either No reviews yet for the product OR Invalid Review Page URL');
 			err.status = 406;
 			throw err;
 		}
@@ -51,11 +48,18 @@ service.getListofReviews = (url) => {
 
 			}
 		}
-		return revObjs;
-	})
-	
+		let nextL = cheerio('div.reviewsPagination dl.reviewPage dd a[title=Next]').attr('href');
+		if(!nextL)
+		{
+			url = null;
+			continue;
+		}
+		cheerio = cheerioMain.load(htmlC);
+		url = "https://www.tigerdirect.com" + nextL.trim();
+	}
+	return revObjs;
+
 
 }
-
 
 module.exports = service;
